@@ -5,6 +5,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Optional, Sequence, Union
 
 import mmcv
+from mmengine import scandir
 from torch.utils.data import Dataset
 
 from .pipelines import Compose
@@ -150,7 +151,7 @@ class BaseDataset(Dataset, metaclass=ABCMeta):
 
         files = []
         for data_dir in data_dirs:
-            for f in mmcv.scandir(data_dir, suffix=suffix):
+            for f in scandir(data_dir, suffix=suffix):
                 if f not in exclude:
                     files.append(osp.join(data_dir, f))
         files.sort()

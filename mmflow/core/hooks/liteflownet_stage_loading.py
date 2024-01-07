@@ -1,7 +1,8 @@
 # Copyright (c) OpenMMLab. All rights reserved.
-from mmcv.parallel import is_module_wrapper
-from mmcv.runner import HOOKS, IterBasedRunner, load_state_dict
-from mmcv.runner.hooks import Hook
+from mmengine.model import is_model_wrapper
+from mmengine.registry import HOOKS
+from mmengine.runner import IterBasedTrainLoop, load_state_dict
+from mmengine.hooks import Hook
 
 
 @HOOKS.register_module()
@@ -22,17 +23,17 @@ class LiteFlowNetStageLoadHook(Hook):
         self.src_level = src_level
         self.dst_level = dst_level
 
-    def before_run(self, runner: IterBasedRunner) -> None:
+    def before_run(self, runner: IterBasedTrainLoop) -> None:
         """Before running function of Hook.
 
         Args:
-            runner (IterBasedRunner): The runner for this training. This hook
-                only has be tested in IterBasedRunner.
+            runner (IterBasedTrainLoop): The runner for this training. This hook
+                only has be tested in IterBasedTrainLoop.
         """
         runner.logger.info(
             f'Submodule of LiteFlowNet decoder at {self.dst_level} loads ' +
             f'LiteFlowNet\'s decoder at {self.src_level}')
-        if is_module_wrapper(runner.model):
+        if is_model_wrapper(runner.model):
             load_state_dict(
                 runner.model.module.decoder.decoders[self.dst_level],
                 runner.model.module.decoder.decoders[

@@ -6,7 +6,7 @@ from typing import Union
 import mmcv
 import numpy as np
 import torch
-from mmcv.parallel import DataContainer as DC
+# from  import DataContainer as DC
 
 from ..builder import PIPELINES
 

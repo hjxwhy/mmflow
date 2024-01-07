@@ -5,7 +5,9 @@ import torch
 from mmflow.models.decoders.flownet_decoder import (BasicBlock, DeconvModule,
                                                     FlowNetCDecoder,
                                                     FlowNetSDecoder)
-
+from mmflow.models.builder import build_from_cfg, MODELS
+from mmflow.utils import register_all_modules
+register_all_modules()
 
 def _get_test_data_cuda(
         _channels=dict(

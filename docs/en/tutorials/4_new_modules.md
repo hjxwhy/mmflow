@@ -7,7 +7,7 @@ MMFlow decomposes a flow estimation method `flow_estimator` into `encoder` and `
 1. Create a new file `mmflow/models/encoders/my_model.py`.
 
 ```python
-from mmcv.runner import BaseModule
+from mmengine.model import BaseModule
 
 from ..builder import ENCODERS
 

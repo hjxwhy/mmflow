@@ -6,7 +6,7 @@ import mmcv
 import numpy as np
 import pytest
 from PIL import Image
-
+from mmengine import FileClient
 from mmflow.datasets.utils import (adjust_gamma, adjust_hue, flow_from_bytes,
                                    visualize_flow, write_flow)
 
@@ -74,7 +74,7 @@ def test_visualize_flow():
 
 def test_flow_from_bytes():
     filename = '../data/0000000-flow_01.flo'
-    file_client = mmcv.FileClient(backend='disk')
+    file_client = FileClient(backend='disk')
     flow_bytes = file_client.get(osp.join(osp.dirname(__file__), filename))
     flow = flow_from_bytes(flow_bytes, filename[-3:])
     assert flow.shape[-1] == 2 and len(flow.shape) == 3

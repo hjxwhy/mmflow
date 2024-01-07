@@ -7,11 +7,14 @@ import mmcv
 import numpy as np
 import torch
 import torch.distributed as dist
-from mmcv.cnn.utils import revert_sync_batchnorm
-from mmcv.parallel import MMDataParallel, MMDistributedDataParallel
-from mmcv.runner import (HOOKS, Fp16OptimizerHook, OptimizerHook,
-                         build_optimizer, build_runner, get_dist_info)
-from mmcv.utils import Config, build_from_cfg
+from mmengine.model.utils import revert_sync_batchnorm
+from mmengine.model import MMDistributedDataParallel
+from mmengine.registry import HOOKS, build_runner_from_cfg
+# from mmengine.runner import build_runner #Fp16OptimizerHook, OptimizerHook
+from mmengine.optim import build_optim_wrapper, OptimWrapper
+from mmengine.registry import build_from_cfg
+from mmengine.config import Config
+from mmengine.dist import get_dist_info
 
 from mmflow import digit_version
 from mmflow.core import DistEvalHook, EvalHook
@@ -148,7 +151,7 @@ def train_model(model: Module,
             'config is now expected to have a `runner` section, '
             'please set `runner` in your config.', UserWarning)
 
-    runner = build_runner(
+    runner = build_runner_from_cfg(
         cfg.runner,
         default_args=dict(
             model=model,

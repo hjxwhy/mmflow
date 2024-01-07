@@ -93,7 +93,7 @@ The users can do those fine-grained parameter tuning through customizing optimiz
 ```python
 from mmcv.utils import build_from_cfg
 
-from mmcv.runner.optimizer import OPTIMIZER_BUILDERS, OPTIMIZERS
+from mmengine.model.optimizer import OPTIMIZER_BUILDERS, OPTIMIZERS
 from mmflow.utils import get_root_logger
 from .my_optimizer import MyOptimizer
 
@@ -201,7 +201,7 @@ so that 1 epoch for training and 1 epoch for validation will be run iteratively.
 Here we give an example of creating a new hook in mmflow and using it in training.
 
 ```python
-from mmcv.runner import HOOKS, Hook
+from mmengine.model import HOOKS, Hook
 
 
 @HOOKS.register_module()
@@ -302,12 +302,12 @@ checkpoint_config = dict(interval=1)
 ```
 
 The users could set `max_keep_ckpts` to only save only small number of checkpoints or decide whether to store state dict of optimizer by `save_optimizer`.
-More details of the arguments are [here](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.CheckpointHook)
+More details of the arguments are [here](https://mmcv.readthedocs.io/en/latest/api.html#mmengine.model.CheckpointHook)
 
 #### Log config
 
 The `log_config` wraps multiple logger hooks and enables to set intervals. Now MMCV supports `WandbLoggerHook`, `MlflowLoggerHook`, and `TensorboardLoggerHook`.
-The detail usages can be found in the [doc](https://mmcv.readthedocs.io/en/latest/api.html#mmcv.runner.LoggerHook).
+The detail usages can be found in the [doc](https://mmcv.readthedocs.io/en/latest/api.html#mmengine.model.LoggerHook).
 
 ```python
 log_config = dict(

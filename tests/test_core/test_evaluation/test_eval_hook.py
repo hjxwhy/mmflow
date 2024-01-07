@@ -6,7 +6,7 @@ from unittest.mock import MagicMock
 import pytest
 import torch
 import torch.nn as nn
-from mmcv.runner import build_runner
+from mmengine.runner import Runner
 from torch.utils.data import DataLoader
 
 from mmflow.core.evaluation import DistEvalHook, EvalHook

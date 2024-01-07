@@ -3,7 +3,7 @@ import os.path as osp
 
 import pytest
 import torch
-from mmcv.utils import Config
+from mmengine.config import Config
 
 from mmflow.models import build_flow_estimator
 from mmflow.models.flow_estimators.base import FlowEstimator

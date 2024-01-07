@@ -9,8 +9,9 @@ import mmcv
 import numpy as np
 import torch
 import torch.distributed as dist
-from mmcv.runner import get_dist_info
-
+from mmengine.dist import get_dist_info
+from mmengine.utils import ProgressBar, mkdir_or_exist
+from mmengine.fileio import dump, load
 from mmflow.datasets.utils import visualize_flow, write_flow
 
 Module = torch.nn.Module
@@ -42,7 +43,7 @@ def single_gpu_test(
     model.eval()
     results = []
     dataset = data_loader.dataset
-    prog_bar = mmcv.ProgressBar(len(dataset))
+    prog_bar = ProgressBar(len(dataset))
     for i, data in enumerate(data_loader):
         with torch.no_grad():
             result = model(test_mode=True, **data)
@@ -52,12 +53,12 @@ def single_gpu_test(
         for _ in range(batch_size):
             prog_bar.update()
     if out_dir is not None:
-        mmcv.mkdir_or_exist(out_dir)
+        mkdir_or_exist(out_dir)
         for i, r in enumerate(results):
             write_flow(r, osp.join(out_dir, f'flow_{i:03d}.flo'))
 
     if show_dir is not None:
-        mmcv.mkdir_or_exist(show_dir)
+        mkdir_or_exist(show_dir)
         for i, r in enumerate(results):
             visualize_flow(r, osp.join(show_dir, f'flowmap_{i:03d}.png'))
 
@@ -92,7 +93,7 @@ def multi_gpu_test(
     dataset = data_loader.dataset
     rank, world_size = get_dist_info()
     if rank == 0:
-        prog_bar = mmcv.ProgressBar(len(dataset))
+        prog_bar = ProgressBar(len(dataset))
     for data in data_loader:
         with torch.no_grad():
             result = model(test_mode=True, **data)
@@ -147,9 +148,9 @@ def collect_results_cpu(result_part: Any,
         dist.broadcast(dir_tensor, 0)
         tmpdir = dir_tensor.cpu().numpy().tobytes().decode().rstrip()
     else:
-        mmcv.mkdir_or_exist(tmpdir)
+        mkdir_or_exist(tmpdir)
     # dump the part result to the dir
-    mmcv.dump(result_part, osp.join(tmpdir, f'part_{rank}.pkl'))
+    dump(result_part, osp.join(tmpdir, f'part_{rank}.pkl'))
     dist.barrier()
     # collect all parts
     if rank != 0:
@@ -159,7 +160,7 @@ def collect_results_cpu(result_part: Any,
         part_list = []
         for i in range(world_size):
             part_file = osp.join(tmpdir, f'part_{i}.pkl')
-            part_list.append(mmcv.load(part_file))
+            part_list.append(load(part_file))
         # sort the results
         ordered_results = []
         for res in zip(*part_list):

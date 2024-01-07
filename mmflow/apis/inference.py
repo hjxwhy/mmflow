@@ -6,14 +6,15 @@ import mmcv
 import numpy as np
 import torch
 from mmcv.ops import Correlation
-from mmcv.parallel import collate, scatter
-from mmcv.runner import load_checkpoint
+from mmengine.dataset import default_collate
+from mmengine.runner.checkpoint import load_checkpoint
+from mmengine.config import Config
 
 from mmflow.datasets.pipelines import Compose
 from mmflow.models import build_flow_estimator
 
 
-def init_model(config: Union[str, mmcv.Config],
+def init_model(config: Union[str, Config],
                checkpoint: Optional[str] = None,
                device: str = 'cuda:0',
                cfg_options: Optional[dict] = None) -> torch.nn.Module:
@@ -32,8 +33,8 @@ def init_model(config: Union[str, mmcv.Config],
     """
 
     if isinstance(config, str):
-        config = mmcv.Config.fromfile(config)
-    elif not isinstance(config, mmcv.Config):
+        config = Config.fromfile(config)
+    elif not isinstance(config, Config):
         raise TypeError('config must be a filename or Config object, '
                         f'but got {type(config)}')
     if cfg_options is not None:
@@ -132,7 +133,7 @@ def inference_model(
         datas.append(data)
         valid_masks.append(valid)
 
-    data = collate(datas, samples_per_gpu=len(img1s))
+    data = default_collate(datas, samples_per_gpu=len(img1s))
     # just get the actual data from DataContainer
 
     data['img_metas'] = data['img_metas'].data[0]

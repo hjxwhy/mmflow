@@ -4,7 +4,7 @@ import os.path as osp
 import mmcv
 import numpy as np
 from mmcv import sparse_flow_from_bytes
-
+from mmengine import FileClient
 from ..builder import PIPELINES
 from ..utils import flow_from_bytes
 
@@ -53,7 +53,7 @@ class LoadImageFromFile:
             dict: The dict contains loaded image and meta information.
         """
         if self.file_client is None:
-            self.file_client = mmcv.FileClient(**self.file_client_args)
+            self.file_client = FileClient(**self.file_client_args)
 
         filename1 = results['img_info']['filename1']
         filename2 = results['img_info']['filename2']
@@ -140,7 +140,7 @@ class LoadAnnotations:
         """
 
         if self.file_client is None:
-            self.file_client = mmcv.FileClient(**self.file_client_args)
+            self.file_client = FileClient(**self.file_client_args)
 
         if self.sparse:
             results = self._load_sparse_flow(results)

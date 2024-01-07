@@ -2,7 +2,9 @@
 from typing import Any, Optional, Sequence, Union
 
 import mmcv
-from mmcv.runner import Hook, IterBasedRunner, get_dist_info
+from mmengine.hooks import Hook
+from mmengine.dist import get_dist_info
+from mmengine.runner import IterBasedTrainLoop, load_state_dict
 from torch.utils.data import DataLoader
 
 from .evaluation import (multi_gpu_online_evaluation,
@@ -45,7 +47,7 @@ class EvalHook(Hook):
             dataset_name, (tuple, list)) else [dataset_name]
         assert len(self.dataloader) == len(self.dataset_name)
 
-    def after_train_iter(self, runner: IterBasedRunner) -> None:
+    def after_train_iter(self, runner: IterBasedTrainLoop) -> None:
         """After train iteration."""
         if self.by_epoch or not self.every_n_iters(runner, self.interval):
             return
@@ -53,14 +55,14 @@ class EvalHook(Hook):
         runner.log_buffer.clear()
         self.evaluate(runner)
 
-    def after_train_epoch(self, runner: IterBasedRunner) -> None:
+    def after_train_epoch(self, runner: IterBasedTrainLoop) -> None:
         """After train epoch."""
         if not self.every_n_epochs(runner, self.interval):
             return
 
         self.evaluate(runner)
 
-    def evaluate(self, runner: IterBasedRunner) -> None:
+    def evaluate(self, runner: IterBasedTrainLoop) -> None:
         """Evaluation function to call online evaluate function."""
         for i_dataset, i_dataloader in zip(self.dataset_name, self.dataloader):
             results_metrics = single_gpu_online_evaluation(
@@ -120,7 +122,7 @@ class DistEvalHook(EvalHook):
 
         assert len(self.dataloader) == len(self.dataset_name)
 
-    def evaluate(self, runner: IterBasedRunner):
+    def evaluate(self, runner: IterBasedTrainLoop):
         """Evaluation function to call online evaluate function."""
         for i_dataset, i_dataloader in zip(self.dataset_name, self.dataloader):
             results_metrics = multi_gpu_online_evaluation(

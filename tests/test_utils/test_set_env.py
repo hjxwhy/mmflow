@@ -7,7 +7,7 @@ import sys
 import cv2
 import mmcv
 import pytest
-from mmcv import Config
+from mmengine.config import Config
 
 import mmflow
 from mmflow.utils import setup_multi_processes

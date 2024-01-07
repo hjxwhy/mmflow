@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, call
 import pytest
 import torch
 import torch.nn as nn
-from mmcv.runner import IterTimerHook, PaviLoggerHook, build_runner
+from mmengine.model import IterTimerHook, PaviLoggerHook, build_runner
 from torch.utils.data import DataLoader
 
 from mmflow.core import MultiStageLrUpdaterHook

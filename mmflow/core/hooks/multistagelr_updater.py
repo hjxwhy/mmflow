@@ -1,11 +1,12 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 from typing import Any, Sequence
 
-from mmcv.runner import HOOKS, IterBasedRunner, LrUpdaterHook
-
+from mmengine.registry import HOOKS
+from mmengine.hooks import Hook
+from mmengine.runner import IterBasedTrainLoop, load_state_dict
 
 @HOOKS.register_module()
-class MultiStageLrUpdaterHook(LrUpdaterHook):
+class MultiStageLrUpdaterHook(Hook):
     """Multi-Stage Learning Rate Hook.
 
     Args:
@@ -39,7 +40,7 @@ class MultiStageLrUpdaterHook(LrUpdaterHook):
 
         super().__init__(**kwargs)
 
-    def get_lr(self, runner: IterBasedRunner, base_lr: float) -> float:
+    def get_lr(self, runner: IterBasedTrainLoop, base_lr: float) -> float:
         """Get current LR.
 
         Args:

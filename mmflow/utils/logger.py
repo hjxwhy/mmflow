@@ -2,7 +2,7 @@
 import logging
 from typing import Optional
 
-from mmcv.utils import get_logger
+from mmengine.logging import MMLogger
 
 
 def get_root_logger(log_file: Optional[str] = None,
@@ -17,4 +17,4 @@ def get_root_logger(log_file: Optional[str] = None,
     Returns:
         logging.Logger: The expected logger.
     """
-    return get_logger('mmflow', log_file, log_level)
+    return MMLogger('mmflow', log_file=log_file, log_level=log_level)

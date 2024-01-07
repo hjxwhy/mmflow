@@ -6,8 +6,9 @@ from typing import Any, Dict, Optional, Sequence, Union
 import mmcv
 import numpy as np
 import torch
-from mmcv.parallel import MMDistributedDataParallel
-from mmcv.runner import get_dist_info
+from mmengine.model import MMDistributedDataParallel
+from mmengine.dist import get_dist_info
+from mmengine.utils import ProgressBar
 
 from .metrics import eval_metrics
 
@@ -62,7 +63,7 @@ def single_gpu_online_evaluation(
     metrics = metric if isinstance(metric, (type, list)) else [metric]
     result_metrics = defaultdict(list)
 
-    prog_bar = mmcv.ProgressBar(len(data_loader))
+    prog_bar = ProgressBar(len(data_loader))
     for data in data_loader:
         with torch.no_grad():
             batch_results = model(test_mode=True, **data)
@@ -141,7 +142,7 @@ def multi_gpu_online_evaluation(
     dataset = data_loader.dataset
     rank, world_size = get_dist_info()
     if rank == 0:
-        prog_bar = mmcv.ProgressBar(len(dataset))
+        prog_bar = ProgressBar(len(dataset))
 
     for data in data_loader:
         with torch.no_grad():
